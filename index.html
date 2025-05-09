@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swibbi - Social Network 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+        
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .news-ticker {
+            background: linear-gradient(90deg, rgba(14,165,233,0.1) 0%, rgba(99,102,241,0.1) 50%, rgba(217,70,239,0.1) 100%);
+        }
+        
+        .dark .news-ticker {
+            background: linear-gradient(90deg, rgba(14,165,233,0.2) 0%, rgba(99,102,241,0.2) 50%, rgba(217,70,239,0.2) 100%);
+        }
+        
+        .post-image {
+            aspect-ratio: 1/1;
+            object-fit: cover;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .ticker-item {
+            display: inline-block;
+            padding-right: 100%;
+            white-space: nowrap;
+            animation: ticker 30s linear infinite;
+        }
+        
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="glass-card fixed top-0 left-0 right-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-3">
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="flex items-center">
+                        <i class="fas fa-bolt text-primary-600 dark:text-primary-400 text-2xl mr-2"></i>
+                        <span class="font-bold text-xl bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent">Swibbi</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#" class="hover:text-primary-600 dark:hover:text-primary-400 transition">
+                        <i class="fas fa-home text-xl"></i>
+                    </a>
+                    <a href="#" class="hover:text-primary-600 dark:hover:text-primary-400 transition">
+                        <i class="fas fa-users text-xl"></i>
+                    </a>
+                    <a href="#" class="hover:text-primary-600 dark:hover:text-primary-400 transition">
+                        <i class="fas fa-plus-square text-xl"></i>
+                    </a>
+                    <a href="#" class="hover:text-primary-600 dark:hover:text-primary-400 transition">
+                        <i class="fas fa-comment-dots text-xl"></i>
+                    </a>
+                    <a href="#" class="hover:text-primary-600 dark:hover:text-primary-400 transition">
+                        <i class="fas fa-bell text-xl"></i>
+                    </a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                    
+                    <div class="relative">
+                        <button class="flex items-center space-x-1">
+                            <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="w-full h-full object-cover">
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="md:hidden flex items-center">
+                        <button class="mobile-menu-button p-2">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu hidden glass-card fixed top-16 right-4 z-50 py-2 px-4 shadow-lg rounded-lg">
+        <div class="flex flex-col space-y-3 py-2">
+            <a href="#" class="flex items-center space-x-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+                <i class="fas fa-home w-5 text-center"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="flex items-center space-x-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+                <i class="fas fa-users w-5 text-center"></i>
+                <span>Friends</span>
+            </a>
+            <a href="#" class="flex items-center space-x-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+                <i class="fas fa-plus-square w-5 text-center"></i>
+                <span>Create</span>
+            </a>
+            <a href="#" class="flex items-center space-x-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+                <i class="fas fa-comment-dots w-5 text-center"></i>
+                <span>Messages</span>
+            </a>
+            <a href="#" class="flex items-center space-x-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+                <i class="fas fa-bell w-5 text-center"></i>
+                <span>Notifications</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- News Ticker -->
+    <div class="news-ticker mt-16 py-2 overflow-hidden border-b border-gray-200 dark:border-gray-800">
+        <div class="whitespace-nowrap">
+            <div class="ticker-item inline-block">
+                <span class="mx-4">🔥 Trending: #SummerVibes has 12.4K posts</span>
+                <span class="mx-4">🎉 New feature: Try our AR filters!</span>
+                <span class="mx-4">📢 Announcement: Server maintenance tonight at 2AM</span>
+                <span class="mx-4">🏆 User of the week: @TravelAddict</span>
+                <span class="mx-4">📸 Photo contest: Best sunset photo wins premium!</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-4 gap-6 pt-24">
+        <!-- Left Sidebar -->
+        <div class="hidden md:block md:col-span-1 space-y-6">
+            <!-- User Profile Card -->
+            <div class="glass-card rounded-xl shadow p-4">
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-r from-primary-500 to-purple-500 p-0.5">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="w-full h-full rounded-full object-cover border-2 border-white dark:border-gray-900">
+                        </div>
+                        <span class="absolute bottom-0 right-0 bg-green-500 rounded-full w-3 h-3 border-2 border-white dark:border-gray-900"></span>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Sarah Johnson</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">@sarahj</p>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between mt-4 text-sm">
+                    <div class="text-center">
+                        <p class="font-semibold">245</p>
+                        <p class="text-gray-500 dark:text-gray-400">Posts</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="font-semibold">1.2K</p>
+                        <p class="text-gray-500 dark:text-gray-400">Followers</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="font-semibold">356</p>
+                        <p class="text-gray-500 dark:text-gray-400">Following</p>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition">
+                        <i class="fas fa-plus mr-1"></i> Create Post
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Groups -->
+            <div class="glass-card rounded-xl shadow p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-semibold">Your Groups</h3>
+                    <a href="#" class="text-sm text-primary-600 dark:text-primary-400">See All</a>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center text-white">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-sm">Food Lovers</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">12 new posts</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center text-white">
+                            <i class="fas fa-plane"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-sm">Travel Enthusiasts</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">8 new posts</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-green-400 to-teal-500 flex items-center justify-center text-white">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-sm">Nature Photographers</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">5 new posts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Events -->
+            <div class="glass-card rounded-xl shadow p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-semibold">Upcoming Events</h3>
+                    <a href="#" class="text-sm text-primary-600 dark:text-primary-400">See All</a>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="p-3 rounded-lg bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-800 border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-start space-x-2">
+                            <div class="bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 rounded-lg p-2 text-center">
+                                <p class="font-bold text-sm">JUN</p>
+                                <p class="font-bold text-lg">15</p>
+                            </div>
+                            <div>
+                                <p class="font-medium text-sm">Photography Workshop</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">10:00 AM • Online</p>
+                                <button class="mt-1 text-xs bg-primary-600 hover:bg-primary-700 text-white px-2 py-1 rounded-full">RSVP</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-3 rounded-lg bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-gray-800 dark:to-gray-800 border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-start space-x-2">
+                            <div class="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-lg p-2 text-center">
+                                <p class="font-bold text-sm">JUN</p>
+                                <p class="font-bold text-lg">20</p>
+                            </div>
+                            <div>
+                                <p class="font-medium text-sm">Food Festival</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">12:00 PM • Central Park</p>
+                                <button class="mt-1 text-xs bg-primary-600 hover:bg-primary-700 text-white px-2 py-1 rounded-full">RSVP</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Feed -->
+        <div class="md:col-span-2 space-y-6">
+            <!-- Create Post -->
+            <div class="glass-card rounded-xl shadow p-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="w-full h-full object-cover">
+                    </div>
+                    <button class="flex-1 bg-gray-100 dark:bg-gray-800 text-left rounded-full py-2 px-4 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                        What's on your mind?
+                    </button>
+                </div>
+                
+                <div class="flex justify-between mt-3 pt-3 border-t border-gray-200 dark:border-gray-800">
+                    <button class="flex items-center space-x-1 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition px-2 py-1 rounded">
+                        <i class="fas fa-image text-primary-600 dark:text-primary-400"></i>
+                        <span class="text-sm">Photo</span>
+                    </button>
+                    <button class="flex items-center space-x-1 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition px-2 py-1 rounded">
+                        <i class="fas fa-user-tag text-blue-600 dark:text-blue-400"></i>
+                        <span class="text-sm">Tag Friends</span>
+                    </button>
+                    <button class="flex items-center space-x-1 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition px-2 py-1 rounded">
+                        <i class="fas fa-calendar text-red-600 dark:text-red-400"></i>
+                        <span class="text-sm">Event</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Post Limit Indicator -->
+            <div class="glass-card rounded-xl shadow p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-primary-500 to-purple-500 flex items-center justify-center text-white">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Daily Post Limit</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">You have 3 posts remaining today</p>
+                        </div>
+                    </div>
+                    <div class="w-16 h-2 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-primary-500 to-purple-500 rounded-full" style="width: 60%;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Posts -->
+            <div class="glass-card rounded-xl shadow overflow-hidden fade-in">
+                <!-- Post Header -->
+                <div class="flex items-center justify-between p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-primary-500 to-purple-500 p-0.5">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="w-full h-full rounded-full object-cover border-2 border-white dark:border-gray-900">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Mike_travels</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">2h ago • <i class="fas fa-globe-americas text-xs"></i></p>
+                        </div>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+                
+                <!-- Post Content -->
+                <div class="px-4 pb-3">
+                    <p>Just arrived in Bali! This place is absolutely breathtaking. Can't wait to explore more of this paradise 🌴☀️ #Travel #Bali</p>
+                </div>
+                
+                <!-- Post Image -->
+                <img src="https://source.unsplash.com/random/600x600/?bali" alt="Bali" class="w-full post-image">
+                
+                <!-- Post Actions -->
+                <div class="p-3 border-t border-gray-200 dark:border-gray-800">
+                    <div class="flex justify-between">
+                        <div class="flex space-x-4">
+                            <button class="flex items-center space-x-1 text-gray-500 dark:text-gray-400 hover:text-red-500 transition">
+                                <i class="fas fa-heart"></i>
+                                <span class="text-sm">124</span>
+                            </button>
+                            <button class="flex items-center space-x-1 text-gray-500 dark:text-gray-400 hover:text-blue-500 transition">
+                                <i class="fas fa-comment"></i>
+                                <span class="text-sm">23</span>
+                            </button>
+                            <button class="flex items-center space-x-1 text-gray-500 dark:text-gray-400 hover:text-green-500 transition">
+                                <i class="fas fa-share"></i>
+                                <span class="text-sm">Share</span>
+                            </button>
+                        </div>
+                        <button class="text-gray-500 dark:text-gray-400 hover:text-yellow-500 transition">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-2 flex items-center space-x-2">
+                        <div class="flex -space-x-2">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Like" class="w-5 h-5 rounded-full border-2 border-white dark:border-gray-900">
+                            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Like" class="w-5 h-5 rounded-full border-2 border-white dark:border-gray-900">
+                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Like" class="w-5 h-5 rounded-full border-2 border-white dark:border-gray-900">
+                        </div>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">Liked by <span class="font-medium">sarahj</span> and <span class="font-medium">123 others</span></span>
+                    </div>
+                </div>
+                
+                <!-- Comments Preview -->
+                <div class="px-4 pb-3 border-t border-gray-200 dark:border-gray-800">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Profile" class="w-full h-full object-cover">
+                        </div>
+                        <p class="text-sm"><span class="font-medium">FoodieEmma</span> The food there is amazing! Try the Nasi Goreng!</p>
+                    </div>
+                    
+                    <button class="text-xs text-gray-500 dark:text-gray-400 mt-1">View all 23 comments</button>
+                    
+                    <div class="mt-2 flex items-center">
+                        <input type="text" placeholder="Add a comment..." class="flex-1 text-sm bg-gray-100 dark:bg-gray-800 rounded-full py-1 px-3 focus:outline-none focus:ring-1 focus:ring-primary-200 dark:focus:ring-primary-800">
+                        <button class="ml-2 text-primary-600 dark:text-primary-400 text-sm font-medium">Post</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Another Post -->
+            <div class="glass-card rounded-xl shadow overflow-hidden fade-in">
+                <!-- Post Header -->
+                <div class="flex items-center justify-between p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-primary-500 to-purple-500 p-0.5">
+                            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Profile" class="w-full h-full rounded-full object-cover border-2 border-white dark:border-gray-900">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">FoodieEmma</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">5h ago • <i class="fas fa-user-friends text-xs"></i></p>
+                        </div>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+                
+                <!-- Post Content -->
+                <div class="px-4 pb-3">
+                    <p>Homemade pasta night! 🍝 Made everything from scratch and it was worth every minute. Recipe in my bio if you want to try it! #Foodie #HomeCooking</p>
+                </div>
+                
+                <!-- Post Image -->
+                <img src="https://source.unsplash.com/random/600x600/?pasta" alt="Pasta" class="w-full post-image">
+                
+                <!-- Post Actions -->
+                <div class="p-3 border-t border-gray-200 dark:border-gray-800">
+                    <div class="flex justify-between">
+                        <div class="flex space-x-4">
+                            <button class="flex items-center space-x-1 text-gray-500 dark:text-gray-400 hover:text-red-500 transition">
+                                <i class="fas fa-heart"></i>
+                                <span class="text-sm">89</span>
+                            </button>
+                            <button class="flex items-center space-x-1 text-gray-500 dark:text-gray-400 hover:text-blue-500 transition">
+                                <i class="fas fa-comment"></i>
+                                <span class="text-sm">14</span>
+                            </button>
+                            <button class="flex items-center space-x-1 text-gray-500 dark:text-gray-400 hover:text-green-500 transition">
+                                <i class="fas fa-share"></i>
+                                <span class="text-sm">Share</span>
+                            </button>
+                        </div>
+                        <button class="text-gray-500 dark:text-gray-400 hover:text-yellow-500 transition">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-2 flex items-center space-x-2">
+                        <div class="flex -space-x-2">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Like" class="w-5 h-5 rounded-full border-2 border-white dark:border-gray-900">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Like" class="w-5 h-5 rounded-full border-2 border-white dark:border-gray-900">
+                        </div>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">Liked by <span class="font-medium">sarahj</span> and <span class="font-medium">88 others</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Sidebar -->
+        <div class="hidden md:block md:col-span-1 space-y-6">
+            <!-- Friends Activity -->
+            <div class="glass-card rounded-xl shadow p-4">
+                <h3 class="font-semibold mb-3">Friends Activity</h3>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="relative">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                                <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Friend" class="w-full h-full object-cover">
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 bg-primary-600 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                                <i class="fas fa-plus text-xs"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">Alex_runner started following you</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">30m ago</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Friend" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">ArtLover liked your post</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">1h ago</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Friend" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">TechGuy commented on your photo</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">2h ago</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="w-full mt-4 text-primary-600 dark:text-primary-400 text-sm font-medium">See All</button>
+            </div>
+            
+            <!-- Suggested Friends -->
+            <div class="glass-card rounded-xl shadow p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-semibold">Suggested Friends</h3>
+                    <a href="#" class="text-sm text-primary-600 dark:text-primary-400">See All</a>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                                <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Friend" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium">YogaMaster</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">12 mutual friends</p>
+                            </div>
+                        </div>
+                        <button class="text-xs bg-primary-600 hover:bg-primary-700 text-white px-3 py-1 rounded-full">Add</button>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                                <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Friend" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium">PhotoPro</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">8 mutual friends</p>
+                            </div>
+                        </div>
+                        <button class="text-xs bg-primary-600 hover:bg-primary-700 text-white px-3 py-1 rounded-full">Add</button>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                                <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="Friend" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium">MusicLover</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">5 mutual friends</p>
+                            </div>
+                        </div>
+                        <button class="text-xs bg-primary-600 hover:bg-primary-700 text-white px-3 py-1 rounded-full">Add</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Temporary Messages -->
+            <div class="glass-card rounded-xl shadow p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-semibold">Temporary Messages</h3>
+                    <div class="flex items-center text-xs bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 px-2 py-1 rounded-full">
+                        <i class="fas fa-stopwatch mr-1"></i>
+                        <span>5 left today</span>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-primary-500 to-purple-500 p-0.5">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Friend" class="w-full h-full rounded-full object-cover border-2 border-white dark:border-gray-900">
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">Mike_travels</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">View before 12h</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-primary-500 to-purple-500 p-0.5">
+                            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Friend" class="w-full h-full rounded-full object-cover border-2 border-white dark:border-gray-900">
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">FoodieEmma</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">View before 8h</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="w-full mt-3 text-primary-600 dark:text-primary-400 text-sm font-medium">See All</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation (Mobile) -->
+    <div class="fixed bottom-0 left-0 right-0 glass-card shadow-lg md:hidden flex justify-around py-3 px-4 border-t border-gray-200 dark:border-gray-800">
+        <a href="#" class="text-primary-600 dark:text-primary-400">
+            <i class="fas fa-home text-xl"></i>
+        </a>
+        <a href="#" class="text-gray-500 dark:text-gray-400">
+            <i class="fas fa-users text-xl"></i>
+        </a>
+        <a href="#" class="text-gray-500 dark:text-gray-400">
+            <i class="fas fa-plus-square text-xl"></i>
+        </a>
+        <a href="#" class="text-gray-500 dark:text-gray-400">
+            <i class="fas fa-comment-dots text-xl"></i>
+        </a>
+        <a href="#" class="text-gray-500 dark:text-gray-400">
+            <i class="fas fa-bell text-xl"></i>
+        </a>
+    </div>
+    
+    <!-- Create Post Modal -->
+    <div id="postModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="glass-card rounded-xl w-full max-w-md max-h-[90vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                <h3 class="font-semibold">Create Post</h3>
+                <button id="closePost" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Post Content -->
+            <div class="p-4 flex-1 overflow-y-auto">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h4 class="font-medium">Sarah Johnson</h4>
+                        <div class="flex items-center space-x-1">
+                            <select class="text-xs bg-gray-100 dark:bg-gray-800 rounded focus:outline-none">
+                                <option><i class="fas fa-globe-americas"></i> Public</option>
+                                <option><i class="fas fa-user-friends"></i> Friends</option>
+                                <option><i class="fas fa-lock"></i> Only me</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <textarea placeholder="What's on your mind?" class="w-full h-32 p-2 focus:outline-none resize-none bg-transparent" id="postContent"></textarea>
+                
+                <div class="mt-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-4 text-center" id="dropZone">
+                    <i class="fas fa-images text-3xl text-gray-400 mb-2"></i>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Drag photos or videos here</p>
+                    <button class="mt-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-medium">
+                        Select from device
+                    </button>
+                </div>
+                
+                <div class="mt-4 flex items-center justify-between text-sm">
+                    <div class="flex items-center space-x-2 text-gray-500 dark:text-gray-400">
+                        <button class="hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full">
+                            <i class="fas fa-user-tag"></i>
+                        </button>
+                        <button class="hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full">
+                            <i class="fas fa-smile"></i>
+                        </button>
+                        <button class="hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500 dark:text-gray-400">0/500</span>
+                        <button class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-1 rounded-lg font-medium">
+                            Post
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chat Modal -->
+    <div id="chatModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="glass-card rounded-xl w-full max-w-md max-h-[80vh] flex flex-col">
+            <!-- Chat Header -->
+            <div class="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Mike_travels</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Active now</p>
+                    </div>
+                </div>
+                <button id="closeChat" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Chat Messages -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-3">
+                <div class="flex items-start space-x-2">
+                    <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="w-full h-full object-cover">
+                    </div>
+                    <div class="bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-xl max-w-xs">
+                        <p class="text-sm">Hey! How are you?</p>
+                        <p class="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">10:02 AM</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-2 justify-end">
+                    <div class="bg-primary-100 dark:bg-primary-900 px-4 py-2 rounded-xl max-w-xs">
+                        <p class="text-sm">I'm good! Just saw your Bali pics, looks amazing!</p>
+                        <p class="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">10:05 AM</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="w-full h-full object-cover">
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-2">
+                    <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="w-full h-full object-cover">
+                    </div>
+                    <div class="bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-xl max-w-xs">
+                        <p class="text-sm">Thanks! You should definitely visit sometime</p>
+                        <p class="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">10:06 AM</p>
+                    </div>
+                </div>
+                
+                <div class="text-center text-xs text-gray-500 dark:text-gray-400 my-3">
+                    <span class="bg-white dark:bg-gray-900 px-2">Today</span>
+                </div>
+                
+                <div class="flex items-start space-x-2 justify-end">
+                    <div class="bg-primary-100 dark:bg-primary-900 px-4 py-2 rounded-xl max-w-xs">
+                        <img src="https://source.unsplash.com/random/200x200/?bali" alt="Photo" class="w-32 h-32 rounded-lg object-cover">
+                        <p class="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">10:08 AM</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Input -->
+            <div class="p-3 border-t border-gray-200 dark:border-gray-800">
+                <div class="flex items-center space-x-2">
+                    <button class="text-gray-500 hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <input type="text" placeholder="Type a message..." class="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full py-2 px-4 focus:outline-none focus:ring-1 focus:ring-primary-200 dark:focus:ring-primary-800">
+                    <button class="text-gray-500 hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-button').addEventListener('click', function() {
+            document.querySelector('.mobile-menu').classList.toggle('hidden');
+        });
+        
+        // Theme toggle
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+        
+        // Check for saved theme preference
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        // Chat modal toggle
+        document.querySelectorAll('[href="#"], .fa-comment-dots').forEach(el => {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('chatModal').classList.remove('hidden');
+            });
+        });
+        
+        document.getElementById('closeChat').addEventListener('click', function() {
+            document.getElementById('chatModal').classList.add('hidden');
+        });
+        
+        // Create post modal toggle
+        document.querySelectorAll('.fa-plus-square, .fa-plus').forEach(el => {
+            el.addEventListener('click', function(e) {
+                if (e.target.closest('button') || e.target.closest('a')) {
+                    e.preventDefault();
+                    document.getElementById('postModal').classList.remove('hidden');
+                }
+            });
+        });
+        
+        document.getElementById('closePost').addEventListener('click', function() {
+            document.getElementById('postModal').classList.add('hidden');
+        });
+        
+        // Close modals when clicking outside
+        [document.getElementById('chatModal'), document.getElementById('postModal')].forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+        
+        // Character counter for post content
+        document.getElementById('postContent').addEventListener('input', function() {
+            const count = this.value.length;
+            document.querySelector('[textContent="0/500"]').textContent = `${count}/500`;
+        });
+        
+        // Drop zone highlight
+        const dropZone = document.getElementById('dropZone');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropZone.classList.add('border-primary-500', 'bg-primary-50', 'dark:bg-primary-900');
+        }
+        
+        function unhighlight() {
+            dropZone.classList.remove('border-primary-500', 'bg-primary-50', 'dark:bg-primary-900');
+        }
+        
+        // Handle dropped files
+        dropZone.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+        
+        function handleFiles(files) {
+            if (files.length) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        dropZone.innerHTML = `<img src="${e.target.result}" class="w-full h-48 object-cover rounded-lg" alt="Preview">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+        
+        // Simulate loading new posts
+        setTimeout(() => {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                el.classList.remove('hidden');
+            });
+        }, 1500);
+    </script>
+<p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px;position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">Made with <img src="https://enzostvs-deepsite.hf.space/logo.svg" alt="DeepSite Logo" style="width: 16px; height: 16px; vertical-align: middle;display:inline-block;margin-right:3px;filter:brightness(0) invert(1);"><a href="https://enzostvs-deepsite.hf.space" style="color: #fff;text-decoration: underline;" target="_blank" >DeepSite</a> - 🧬 <a href="https://enzostvs-deepsite.hf.space?remix=SwibbiAdmin/swibbi" style="color: #fff;text-decoration: underline;" target="_blank" >Remix</a></p></body>
+</html>
